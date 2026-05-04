@@ -42,3 +42,10 @@ next-env.d.ts
 
 .vercel
 .env*.local
+
+# database migration scripts
+*.sql
+
+# claude/agent instructions
+CLAUDE.md
+AGENTS.md
