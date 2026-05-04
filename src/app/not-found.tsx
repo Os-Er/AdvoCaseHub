@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { FileQuestion } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
@@ -16,9 +15,13 @@ export default function NotFound() {
         <p className="text-slate-500 mb-8">
           Aradığınız sayfa mevcut değil veya taşınmış olabilir.
         </p>
-        <Button asChild style={{ backgroundColor: "#1B2A4A" }} className="text-white">
-          <Link href="/dashboard">Panele Dön</Link>
-        </Button>
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center justify-center px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90"
+          style={{ backgroundColor: "#1B2A4A" }}
+        >
+          Panele Dön
+        </Link>
       </div>
     </div>
   );
