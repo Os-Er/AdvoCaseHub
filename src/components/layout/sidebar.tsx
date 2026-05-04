@@ -93,6 +93,11 @@ export function SidebarContent({ onItemClick, badges }: { onItemClick?: () => vo
             Çıkış Yap
           </button>
         </form>
+        <div className="flex gap-3 mt-3 px-3">
+          <Link href="/kvkk" target="_blank" className="text-[10px] text-slate-500 hover:text-slate-300">KVKK</Link>
+          <Link href="/gizlilik-politikasi" target="_blank" className="text-[10px] text-slate-500 hover:text-slate-300">Gizlilik</Link>
+          <Link href="/kullanim-kosullari" target="_blank" className="text-[10px] text-slate-500 hover:text-slate-300">Koşullar</Link>
+        </div>
       </div>
     </div>
   );
