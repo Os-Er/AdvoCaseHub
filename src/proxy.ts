@@ -34,7 +34,10 @@ export async function proxy(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/register") ||
     request.nextUrl.pathname.startsWith("/reset-password") ||
     request.nextUrl.pathname.startsWith("/auth") ||
-    request.nextUrl.pathname.startsWith("/loading-screen");
+    request.nextUrl.pathname.startsWith("/loading-screen") ||
+    request.nextUrl.pathname.startsWith("/kvkk") ||
+    request.nextUrl.pathname.startsWith("/gizlilik-politikasi") ||
+    request.nextUrl.pathname.startsWith("/kullanim-kosullari");
 
   if (!user && !isAuthPage) {
     const url = request.nextUrl.clone();
