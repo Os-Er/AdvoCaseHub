@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, Lock, User } from "lucide-react";
@@ -16,6 +16,7 @@ export function RegisterForm() {
     signUpWithEmail,
     null
   );
+  const [kvkkAccepted, setKvkkAccepted] = useState(false);
 
   return (
     <div className="w-full max-w-md">
@@ -56,7 +57,23 @@ export function RegisterForm() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full text-white" style={{ backgroundColor: "#1B2A4A" }} disabled={pending}>
+          <div className="flex items-start gap-2.5 pt-1">
+            <input
+              id="kvkk"
+              type="checkbox"
+              checked={kvkkAccepted}
+              onChange={(e) => setKvkkAccepted(e.target.checked)}
+              className="mt-0.5 w-4 h-4 rounded border-slate-300 accent-[#1B2A4A] cursor-pointer flex-shrink-0"
+            />
+            <label htmlFor="kvkk" className="text-xs text-slate-500 leading-relaxed cursor-pointer">
+              <Link href="/kvkk" target="_blank" className="underline hover:text-[#1B2A4A]">KVKK Aydınlatma Metni</Link>
+              'ni ve{" "}
+              <Link href="/gizlilik-politikasi" target="_blank" className="underline hover:text-[#1B2A4A]">Gizlilik Politikası</Link>
+              'nı okudum, kabul ediyorum.
+            </label>
+          </div>
+
+          <Button type="submit" className="w-full text-white" style={{ backgroundColor: "#1B2A4A" }} disabled={pending || !kvkkAccepted}>
             {pending ? "Hesap oluşturuluyor..." : "Kayıt Ol"}
           </Button>
         </form>

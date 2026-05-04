@@ -9,8 +9,29 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "AdvoCaseHub — Avukatlık Yönetim Sistemi",
-  description: "Dosyalarınızı, vekaletnamelerinizi ve makbuzlarınızı tek yerden yönetin.",
+  metadataBase: new URL("https://advocasehub.com"),
+  title: {
+    default: "AdvoCaseHub — Avukatlık Yönetim Sistemi",
+    template: "%s — AdvoCaseHub",
+  },
+  description:
+    "Türk avukatlara özel bulut tabanlı hukuk bürosu yönetim sistemi. Dava dosyalarınızı, vekaletnamelerinizi ve makbuzlarınızı tek yerden güvenle yönetin.",
+  keywords: ["avukat yazılımı", "hukuk bürosu yönetimi", "dava takip", "vekaletname", "avukatlık programı"],
+  authors: [{ name: "AdvoCaseHub" }],
+  openGraph: {
+    type: "website",
+    locale: "tr_TR",
+    url: "https://advocasehub.com",
+    siteName: "AdvoCaseHub",
+    title: "AdvoCaseHub — Avukatlık Yönetim Sistemi",
+    description:
+      "Türk avukatlara özel bulut tabanlı hukuk bürosu yönetim sistemi.",
+    images: [{ url: "/logo.png", width: 200, height: 160, alt: "AdvoCaseHub" }],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
