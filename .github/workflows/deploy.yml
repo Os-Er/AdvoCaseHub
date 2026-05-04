@@ -18,7 +18,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Vercel CLI
-        run: npm install -g vercel@latest
+        run: npm install -g vercel@53.1.0
 
       - name: Pull Vercel project settings
         run: vercel pull --yes --environment=production
