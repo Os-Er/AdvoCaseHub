@@ -80,6 +80,9 @@ export function LoginForm() {
                 placeholder="••••••••"
                 className="pl-9"
                 required
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") e.currentTarget.form?.requestSubmit();
+                }}
               />
             </div>
           </div>

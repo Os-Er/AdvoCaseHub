@@ -53,7 +53,7 @@ export function RegisterForm() {
             <Label htmlFor="password">Şifre</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <Input id="password" name="password" type="password" placeholder="En az 8 karakter" className="pl-9" minLength={8} required />
+              <Input id="password" name="password" type="password" placeholder="En az 8 karakter" className="pl-9" minLength={8} required onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.form?.requestSubmit(); }} />
             </div>
           </div>
 
