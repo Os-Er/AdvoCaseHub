@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 // Giriş gerektirmeyen rotalar
 const ACIK_ROTALAR = ["/login", "/register", "/reset-password"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Açık rotalara doğrudan geç
@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Supabase SSR client — cookie'leri response'a aktarıyoruz
-  let supabaseResponse = NextResponse.next({ request });
+  let proxyResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,9 +27,9 @@ export async function middleware(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
-          supabaseResponse = NextResponse.next({ request });
+          proxyResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            proxyResponse.cookies.set(name, value, options)
           );
         },
       },
@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Giriş yapılmamışsa /giris'e yönlendir
+  // Giriş yapılmamışsa /login'e yönlendir
   if (!user) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
@@ -50,7 +50,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  return supabaseResponse;
+  return proxyResponse;
 }
 
 export const config = {
