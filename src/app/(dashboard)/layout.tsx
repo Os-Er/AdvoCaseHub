@@ -16,27 +16,42 @@ export default async function DashboardLayout({
 
   const bugun = new Date().toISOString().split("T")[0];
   const gun30 = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+  const yarin = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
   const [
     { data: profile },
     { count: dolacakVekalet },
     { count: bekleyenMakbuz },
+    { count: yaklasanIsler },
   ] = await Promise.all([
     supabase
       .from("users")
       .select("full_name, email, avatar_url")
       .eq("id", user.id)
       .single(),
+
+    // Vekaletnameler: 30 gün içinde dolacak aktif olanlar
     supabase
       .from("vekaletnameler")
       .select("id", { count: "exact", head: true })
       .eq("durum", "AKTIF")
       .gte("bitis_tarihi", bugun)
       .lte("bitis_tarihi", gun30) as unknown as Promise<{ count: number | null }>,
+
+    // Finans: ödenmemiş / kısmi makbuzlar
     supabase
-      .from("makbuzlar")
+      .from("finans")
       .select("id", { count: "exact", head: true })
-      .in("durum", ["BEKLENIYOR", "KISMI"]) as unknown as Promise<{ count: number | null }>,
+      .eq("tip", "MAKBUZ")
+      .in("durum", ["BEKLIYOR", "KISMI"]) as unknown as Promise<{ count: number | null }>,
+
+    // Süreli işler: bugün ve yarın dolacak, tamamlanmamış
+    supabase
+      .from("sureli_isler")
+      .select("id", { count: "exact", head: true })
+      .eq("tamamlandi", false)
+      .eq("arsivlendi", false)
+      .lte("son_tarih", yarin) as unknown as Promise<{ count: number | null }>,
   ]);
 
   const displayUser = profile ?? {
@@ -46,8 +61,9 @@ export default async function DashboardLayout({
   };
 
   const badges = {
-    dolacakVekalet: dolacakVekalet ?? 0,
-    bekleyenMakbuz: bekleyenMakbuz ?? 0,
+    dolacakVekalet:  dolacakVekalet  ?? 0,
+    bekleyenMakbuz:  bekleyenMakbuz  ?? 0,
+    yaklasanIsler:   yaklasanIsler   ?? 0,
   };
 
   return (
