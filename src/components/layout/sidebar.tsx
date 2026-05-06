@@ -66,7 +66,7 @@ type NavItem = SingleItem | GroupItem;
 const NAV: NavItem[] = [
   {
     kind: "single",
-    href: "/dashboard",
+    href: "/",
     label: "Ana Sayfa",
     icon: LayoutDashboard,
     exact: true,
