@@ -24,9 +24,11 @@ export function SilButonu({ id }: { id: string }) {
     startTransition(async () => {
       const result = await deleteDosya(id);
       setOpen(false);
-      if (result?.success) {
+      if (result && "error" in result) {
+        toast.error(result.error);
+      } else {
         toast.warning("Dosya silindi");
-        router.push("/dosyalar");
+        router.push("/dosyalar/hukuk");
       }
     });
   }

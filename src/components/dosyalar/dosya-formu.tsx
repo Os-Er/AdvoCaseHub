@@ -10,15 +10,22 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { DURUM_OPTIONS } from "./durum-badge";
 import type { DosyaActionState } from "@/lib/actions/dosyalar";
-import type { Dosya, Kategori } from "@/lib/types/database";
+import type { Dosya, Kategori, DosyaTip } from "@/lib/types/database";
 
 type Action = (prev: DosyaActionState, fd: FormData) => Promise<DosyaActionState>;
+
+const TIP_LABEL: Record<DosyaTip, string> = {
+  HUKUK: "Hukuk",
+  CEZA:  "Ceza",
+  ICRA:  "İcra",
+};
 
 interface Props {
   action: Action;
   kategoriler: Kategori[];
   dosya?: Dosya;
   cancelHref: string;
+  tip?: DosyaTip;
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -41,10 +48,11 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-export function DosyaFormu({ action, kategoriler, dosya, cancelHref }: Props) {
+export function DosyaFormu({ action, kategoriler, dosya, cancelHref, tip }: Props) {
   const router = useRouter();
   const [state, formAction, pending] = useActionState<DosyaActionState, FormData>(action, null);
   const d = dosya;
+  const effectiveTip: DosyaTip = dosya?.tip ?? tip ?? "HUKUK";
 
   useEffect(() => {
     if (state && "success" in state) {
@@ -56,6 +64,9 @@ export function DosyaFormu({ action, kategoriler, dosya, cancelHref }: Props) {
 
   return (
     <form action={formAction} className="space-y-8">
+      {/* Tip hidden field */}
+      <input type="hidden" name="tip" value={effectiveTip} />
+
       {state && "error" in state && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
           {state.error}
@@ -63,7 +74,7 @@ export function DosyaFormu({ action, kategoriler, dosya, cancelHref }: Props) {
       )}
 
       {/* Temel Bilgiler */}
-      <Section title="Temel Bilgiler">
+      <Section title={`Temel Bilgiler — ${TIP_LABEL[effectiveTip]} Dosyası`}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Kategori *">
             <select
