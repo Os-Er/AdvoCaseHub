@@ -132,6 +132,16 @@ export async function DosyaListesi({ tip, searchParams }: DosyaListesiProps) {
     .select("id, adi, color, user_id")
     .order("adi") as unknown as { data: Kategori[] | null };
 
+  // Taraf adı araması için eşleşen dosya ID'leri önceden çek
+  let tarafDosyaIds: string[] = [];
+  if (q) {
+    const { data: tarafMatches } = await supabase
+      .from("dosya_taraflari")
+      .select("dosya_id")
+      .ilike("ad", `%${q}%`) as unknown as { data: { dosya_id: string }[] | null };
+    tarafDosyaIds = [...new Set(tarafMatches?.map((t) => t.dosya_id) ?? [])];
+  }
+
   let query = supabase
     .from("dosyalar")
     .select(
@@ -152,7 +162,14 @@ export async function DosyaListesi({ tip, searchParams }: DosyaListesiProps) {
     query = query.order("created_at", { ascending: false });
   }
 
-  if (q) query = query.or(`klasor_no.ilike.%${q}%,dosya_no.ilike.%${q}%,taraf_1.ilike.%${q}%,taraf_2.ilike.%${q}%`);
+  if (q) {
+    const baseFilter = `klasor_no.ilike.%${q}%,dosya_no.ilike.%${q}%,mahkeme_merkez.ilike.%${q}%,konu.ilike.%${q}%`;
+    if (tarafDosyaIds.length > 0) {
+      query = query.or(`${baseFilter},id.in.(${tarafDosyaIds.join(",")})`);
+    } else {
+      query = query.or(baseFilter);
+    }
+  }
   if (durum) query = query.eq("durum", durum as DosyaDurum);
   if (kategori) query = query.eq("kategori_id", Number(kategori));
   if (yil) query = query.or(dosyaYilFiltresi(yil));

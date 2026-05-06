@@ -9,7 +9,7 @@ import { MakbuzDurumBadge } from "@/components/makbuzlar/makbuz-durum-badge";
 import { VekaletDurumBadge } from "@/components/vekaletnameler/vekalet-durum-badge";
 import { SureBadge } from "@/components/vekaletnameler/sure-badge";
 import { formatTL } from "@/lib/utils/para";
-import type { Dosya, DosyaDurum, Makbuz, MakbuzDurum, Vekaletname, Vekaletnamedurum } from "@/lib/types/database";
+import type { Dosya, DosyaDurum, Makbuz, MakbuzDurum, Vekaletname, Vekaletnamedurum, DosyaTaraf } from "@/lib/types/database";
 
 type DosyaWithKat = Dosya & { kategoriler: { adi: string; color: string | null } | null };
 
@@ -37,6 +37,7 @@ export default async function DosyaDetayPage({ params }: { params: Promise<{ id:
 
   const [
     { data: dosya },
+    { data: taraflar },
     { data: makbuzIliskiler },
     { data: vekaletIliskiler },
   ] = await Promise.all([
@@ -45,6 +46,11 @@ export default async function DosyaDetayPage({ params }: { params: Promise<{ id:
       .select("*, kategoriler(adi, color)")
       .eq("id", id)
       .single() as unknown as Promise<{ data: DosyaWithKat | null }>,
+    supabase
+      .from("dosya_taraflari")
+      .select("id, ad, rol, sira")
+      .eq("dosya_id", id)
+      .order("sira") as unknown as Promise<{ data: Pick<DosyaTaraf, "id"|"ad"|"rol"|"sira">[] | null }>,
     supabase
       .from("makbuz_dosya")
       .select("makbuz_id, makbuzlar(id, makbuz_no, makbuz_miktari, odeme_miktari, makbuz_tarihi, durum)")
@@ -109,8 +115,23 @@ export default async function DosyaDetayPage({ params }: { params: Promise<{ id:
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-5">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-3">Taraflar</h3>
-          <InfoRow icon={Users}  label="Taraf 1"          value={dosya.taraf_1} />
-          <InfoRow icon={Users}  label="Taraf 2"          value={dosya.taraf_2} />
+          {taraflar && taraflar.length > 0 ? (
+            <div className="space-y-2">
+              {taraflar.map((t) => (
+                <div key={t.id} className="flex items-center gap-3 py-2 border-b border-slate-100 last:border-0">
+                  <Users className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-slate-800 font-medium">{t.ad}</p>
+                    {t.rol && (
+                      <p className="text-xs text-slate-400">{t.rol}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400 italic">Taraf bilgisi girilmemiş.</p>
+          )}
           <InfoRow icon={MapPin} label="Mahkeme / Merkez" value={dosya.mahkeme_merkez} />
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-5">

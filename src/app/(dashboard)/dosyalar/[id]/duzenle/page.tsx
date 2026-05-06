@@ -5,20 +5,38 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { DosyaFormu } from "@/components/dosyalar/dosya-formu";
 import { updateDosya } from "@/lib/actions/dosyalar";
-import type { Dosya } from "@/lib/types/database";
+import type { Dosya, DosyaTaraf } from "@/lib/types/database";
 
 export default async function DosyaDuzenlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: dosya }, { data: kategoriler }] = await Promise.all([
-    supabase.from("dosyalar").select("*").eq("id", id).single() as unknown as Promise<{ data: Dosya | null }>,
-    supabase.from("kategoriler").select("id, adi, color, user_id").order("adi") as unknown as Promise<{ data: import("@/lib/types/database").Kategori[] | null }>,
+  const [{ data: dosya }, { data: kategoriler }, { data: taraflar }] = await Promise.all([
+    supabase
+      .from("dosyalar")
+      .select("*")
+      .eq("id", id)
+      .single() as unknown as Promise<{ data: Dosya | null }>,
+    supabase
+      .from("kategoriler")
+      .select("id, adi, color, user_id")
+      .order("adi") as unknown as Promise<{ data: import("@/lib/types/database").Kategori[] | null }>,
+    supabase
+      .from("dosya_taraflari")
+      .select("id, ad, rol, sira")
+      .eq("dosya_id", id)
+      .order("sira") as unknown as Promise<{ data: Pick<DosyaTaraf, "id"|"ad"|"rol"|"sira">[] | null }>,
   ]);
 
   if (!dosya) notFound();
 
   const boundAction = updateDosya.bind(null, id);
+
+  const initialTaraflar = (taraflar ?? []).map((t) => ({
+    id: t.id,
+    ad: t.ad,
+    rol: t.rol ?? "",
+  }));
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -43,6 +61,7 @@ export default async function DosyaDuzenlePage({ params }: { params: Promise<{ i
           kategoriler={kategoriler ?? []}
           dosya={dosya}
           cancelHref={`/dosyalar/${id}`}
+          initialTaraflar={initialTaraflar}
         />
       </div>
     </div>

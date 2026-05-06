@@ -204,6 +204,24 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["audit_logs"]["Insert"]>;
       };
 
+      dosya_taraflari: {
+        Row: {
+          id: string;
+          dosya_id: string;
+          user_id: string;
+          ad: string;
+          rol: string | null;
+          sira: number;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["dosya_taraflari"]["Row"], "id" | "created_at"> & {
+          id?: string;
+          sira?: number;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["dosya_taraflari"]["Insert"]>;
+      };
+
       // --------------------------------------------------------
       // v2 — Yeni tablolar
       // --------------------------------------------------------
@@ -377,6 +395,8 @@ export interface Database {
 // ============================================================
 // Kısaltma tipleri — v1
 // ============================================================
+export type DosyaTaraf = Database["public"]["Tables"]["dosya_taraflari"]["Row"];
+export type DosyaTarafInsert = Database["public"]["Tables"]["dosya_taraflari"]["Insert"];
 
 export type User             = Database["public"]["Tables"]["users"]["Row"];
 export type Kategori         = Database["public"]["Tables"]["kategoriler"]["Row"];

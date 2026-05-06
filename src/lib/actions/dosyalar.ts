@@ -19,6 +19,39 @@ function formDate(fd: FormData, key: string): string | null {
   return v || null;
 }
 
+// Taraf satırlarını kaydet (delete + reinsert)
+async function saveTaraflar(
+  supabase: Awaited<ReturnType<typeof import("@/lib/supabase/server").createClient>>,
+  dosyaId: string,
+  userId: string,
+  taraflarJson: string | null
+) {
+  await supabase
+    .from("dosya_taraflari")
+    .delete()
+    .eq("dosya_id", dosyaId)
+    .eq("user_id", userId);
+
+  if (!taraflarJson) return;
+  try {
+    const taraflar: { ad: string; rol: string }[] = JSON.parse(taraflarJson);
+    const rows = taraflar
+      .filter((t) => t.ad?.trim())
+      .map((t, i) => ({
+        dosya_id: dosyaId,
+        user_id: userId,
+        ad: t.ad.trim(),
+        rol: t.rol || null,
+        sira: i,
+      }));
+    if (rows.length > 0) {
+      await supabase.from("dosya_taraflari").insert(rows);
+    }
+  } catch {
+    // geçersiz JSON — sessizce geç
+  }
+}
+
 // Tüm dosya path'lerini revalidate et
 function revalidateAll(id?: string) {
   revalidatePath("/dosyalar/hukuk");
@@ -72,6 +105,8 @@ export async function createDosya(
   }
   if (!dosya) return { error: "Kayıt oluşturulamadı." };
 
+  await saveTaraflar(supabase, dosya.id, user.id, formData.get("taraflar_json") as string | null);
+
   revalidateAll(dosya.id);
   return { success: true, id: dosya.id };
 }
@@ -112,6 +147,8 @@ export async function updateDosya(
     if (error.code === "23505") return { error: "Bu numara zaten başka bir dosyada kayıtlı." };
     return { error: error.message };
   }
+
+  await saveTaraflar(supabase, id, user.id, formData.get("taraflar_json") as string | null);
 
   revalidateAll(id);
   return { success: true, id };

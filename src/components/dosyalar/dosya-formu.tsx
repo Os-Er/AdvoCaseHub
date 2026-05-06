@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { DURUM_OPTIONS } from "./durum-badge";
+import { TaraflarFormu, type TarafItem } from "./taraflar-formu";
 import type { DosyaActionState } from "@/lib/actions/dosyalar";
 import type { Dosya, Kategori, DosyaTip } from "@/lib/types/database";
 
@@ -26,6 +27,7 @@ interface Props {
   dosya?: Dosya;
   cancelHref: string;
   tip?: DosyaTip;
+  initialTaraflar?: TarafItem[];
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -48,7 +50,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-export function DosyaFormu({ action, kategoriler, dosya, cancelHref, tip }: Props) {
+export function DosyaFormu({ action, kategoriler, dosya, cancelHref, tip, initialTaraflar }: Props) {
   const router = useRouter();
   const [state, formAction, pending] = useActionState<DosyaActionState, FormData>(action, null);
   const d = dosya;
@@ -120,16 +122,13 @@ export function DosyaFormu({ action, kategoriler, dosya, cancelHref, tip }: Prop
       </Section>
 
       {/* Taraflar */}
-      <Section title="Taraflar & Mahkeme">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Taraf 1">
-            <Input name="taraf_1" defaultValue={d?.taraf_1 ?? ""} placeholder="Ad Soyad / Kurum" />
-          </Field>
-          <Field label="Taraf 2">
-            <Input name="taraf_2" defaultValue={d?.taraf_2 ?? ""} placeholder="Ad Soyad / Kurum" />
-          </Field>
-        </div>
-        <Field label="Mahkeme / Merkez">
+      <Section title="Taraflar">
+        <TaraflarFormu tip={effectiveTip} initialTaraflar={initialTaraflar} />
+      </Section>
+
+      {/* Mahkeme & Konu */}
+      <Section title="Mahkeme & Konu">
+        <Field label="Mahkeme / Merkez / İcra Dairesi">
           <Input name="mahkeme_merkez" defaultValue={d?.mahkeme_merkez ?? ""} placeholder="İstanbul Anadolu Adliyesi" />
         </Field>
         <Field label="Konu">
