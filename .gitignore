@@ -43,8 +43,9 @@ next-env.d.ts
 .vercel
 .env*.local
 
-# database migration scripts
-*.sql
+# database — sadece kök dizindeki geçici SQL dosyaları (migration'lar hariç)
+/*.sql
+!supabase/migrations/*.sql
 
 # claude/agent instructions
 CLAUDE.md
