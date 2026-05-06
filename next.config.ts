@@ -3,12 +3,6 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   async redirects() {
     return [
-      // v1 dashboard → v2 root
-      {
-        source: "/dashboard",
-        destination: "/",
-        permanent: true,
-      },
       // v1 makbuzlar → v2 finans/makbuzlar
       {
         source: "/makbuzlar",
