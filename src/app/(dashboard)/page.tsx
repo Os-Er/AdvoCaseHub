@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { fetchDashboardVeri } from "@/lib/utils/dashboard-veri";
 import { DosyaTipGrafik } from "@/components/dashboard/dosya-tip-grafik";
+import { V2LaunchBanner } from "@/components/dashboard/v2-launch-banner";
 import { KalanGunBadge, OncelikBadge, KategoriBadge } from "@/components/sureli-isler/oncelik-badge";
 import type { Oncelik, SureliIsKategori } from "@/lib/types/database";
 
@@ -141,6 +142,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
+
+      {/* v2 Launch Banner — bir kez gösterilir, localStorage'a kaydedilir */}
+      <V2LaunchBanner />
 
       {/* Başlık */}
       <div className="flex items-end justify-between flex-wrap gap-2">
