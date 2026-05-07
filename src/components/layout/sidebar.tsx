@@ -10,6 +10,7 @@ import {
   Gavel,
   TrendingDown,
   Handshake,
+  Users2,
   ShieldCheck,
   BriefcaseBusiness,
   Clock,
@@ -87,6 +88,12 @@ const NAV: NavItem[] = [
     href: "/arabuluculuk",
     label: "Arabuluculuk",
     icon: Handshake,
+  },
+  {
+    kind: "single",
+    href: "/uzlastirma",
+    label: "Uzlaştırma",
+    icon: Users2,
   },
   {
     kind: "single",

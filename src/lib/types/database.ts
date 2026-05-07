@@ -21,6 +21,9 @@ export type DosyaTip = "HUKUK" | "CEZA" | "ICRA";
 export type ArabuluculukSonuc = "ANLASMA" | "ANLASAMAMAMA" | "DEVAM";
 export type ArabuluculukDurum = "DEVAM" | "TAMAMLANDI" | "IPTAL";
 
+export type UzlastirmaSonuc = "UZLASTI" | "UZLASAMADI" | "DEVAM";
+export type UzlastirmaDurum = "DEVAM" | "TAMAMLANDI" | "IPTAL";
+
 export type CmkSureTipi = "SORUSTURMA" | "KOVUSTURMA";
 export type CmkDurum = "DEVAM" | "TAMAMLANDI" | "IPTAL";
 
@@ -308,6 +311,35 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["danismanlik"]["Insert"]>;
       };
 
+      uzlastirma: {
+        Row: {
+          id: string;
+          user_id: string;
+          basvuru_no: string | null;
+          suphe_sani: string | null;
+          magdur: string | null;
+          uzlastirmaci_adi: string | null;
+          suc_isnad: string | null;
+          atama_tarihi: string | null;
+          gorusme_tarihi: string | null;
+          sonuc: UzlastirmaSonuc | null;
+          durum: UzlastirmaDurum;
+          arsivlendi: boolean;
+          ucret: number | null;
+          notlar: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["uzlastirma"]["Row"], "id" | "created_at" | "updated_at"> & {
+          id?: string;
+          durum?: UzlastirmaDurum;
+          arsivlendi?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["uzlastirma"]["Insert"]>;
+      };
+
       sureli_isler: {
         Row: {
           id: string;
@@ -415,6 +447,7 @@ export type CmkIslem         = Database["public"]["Tables"]["cmk_islemleri"]["Ro
 export type Danismanlik      = Database["public"]["Tables"]["danismanlik"]["Row"];
 export type SureliIs         = Database["public"]["Tables"]["sureli_isler"]["Row"];
 export type Finans           = Database["public"]["Tables"]["finans"]["Row"];
+export type Uzlastirma       = Database["public"]["Tables"]["uzlastirma"]["Row"];
 
 // Insert tipleri (form submit için)
 export type ArabuluculukInsert = Database["public"]["Tables"]["arabuluculuk"]["Insert"];
@@ -422,6 +455,7 @@ export type CmkIslemInsert    = Database["public"]["Tables"]["cmk_islemleri"]["I
 export type DanismanlikInsert = Database["public"]["Tables"]["danismanlik"]["Insert"];
 export type SureliIsInsert    = Database["public"]["Tables"]["sureli_isler"]["Insert"];
 export type FinansInsert      = Database["public"]["Tables"]["finans"]["Insert"];
+export type UzlastirmaInsert  = Database["public"]["Tables"]["uzlastirma"]["Insert"];
 
 // Update tipleri
 export type ArabuluculukUpdate = Database["public"]["Tables"]["arabuluculuk"]["Update"];
@@ -429,3 +463,4 @@ export type CmkIslemUpdate    = Database["public"]["Tables"]["cmk_islemleri"]["U
 export type DanismanlikUpdate = Database["public"]["Tables"]["danismanlik"]["Update"];
 export type SureliIsUpdate    = Database["public"]["Tables"]["sureli_isler"]["Update"];
 export type FinansUpdate      = Database["public"]["Tables"]["finans"]["Update"];
+export type UzlastirmaUpdate  = Database["public"]["Tables"]["uzlastirma"]["Update"];
