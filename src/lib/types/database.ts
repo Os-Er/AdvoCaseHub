@@ -106,12 +106,14 @@ export interface Database {
           sonuc: string | null;
           notlar: string | null;
           durum: DosyaDurum;
+          arsivlendi: boolean;
           created_at: string;
           updated_at: string;
         };
         Insert: Omit<Database["public"]["Tables"]["dosyalar"]["Row"], "id" | "created_at" | "updated_at"> & {
           id?: string;
           tip?: DosyaTip;
+          arsivlendi?: boolean;
           created_at?: string;
           updated_at?: string;
         };
